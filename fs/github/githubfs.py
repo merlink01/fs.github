@@ -9,6 +9,7 @@ import os
 import six
 from github import Github
 from fs.path import iteratepath
+from fs.path import join
 
 # ~ from .seekable_http_file import SeekableHTTPFile
 from .. import errors
@@ -17,59 +18,54 @@ from ..enums import ResourceType
 from ..info import Info
 from ..iotools import RawWrapper
 
-
+from github.GithubException import UnknownObjectException
 class GithubFS(FS):
-    def __init__(self,user,password):
+    def __init__(self,user,repo,password=None):
+
         self.user = user
-        self.account = Github(user, password)
+        self.repo = repo
+        if not password:
+            self.account = Github()
+        else:
+            self.account = Github(user, password)
 
     def __str__(self):
-        return u'GithubFS (%s)'%self.user
+        return u'GithubFS (%s/%s)'%(self.user, self.repo)
 
 
     def listdir(self, path):
-        _path = self.validatepath(path)
 
-        if _path in [u'', u'.', u'/', u'./']:
-            return [self.user]
-            
-        if _path == '/%s'%self.user or _path == '/%s/'%self.user:
-            repolist = []
-            for repo in self.account.get_user().get_repos():
-                repolist.append(repo.name)
-            return repolist
-        
+        _path = self.validatepath(path)
+        splitpath = iteratepath(_path)
+        repopath = '%s/%s'%(self.user,self.repo)
+
         if _path.startswith('/'):
             _path = _path[1:]
-            
-            
-        splitpath = _path.split('/')
-        
-        repopath = '%s/%s'%(splitpath[0],splitpath[1])
-        filepath = path.replace(repopath,'')
+
 
         
         repo = self.account.get_repo(repopath)
-        
-        if filepath == '':
+
+        if _path == '':
             
-            contents = repo.get_contents(filepath)
+            contents = repo.get_contents(_path)
             filelist = []
             for content_file in contents:
-                filelist.append(content_file.path)
+                filelist.append(content_file.name)
+
             return filelist
         else:
-            contents = repo.get_contents(filepath)
+            contents = repo.get_contents(_path)
             filelist = []
             for content_file in contents:
-                filelist.append(('/%s'%content_file.path).replace('%s/'%filepath,''))
+                filelist.append(content_file.name)
+
             return filelist
 
 
     def getinfo(self, path, namespaces=None):
-        _path = self.validatepath(path)
         namespaces = namespaces or ('basic')
-        print('getinfo', path, namespaces)
+        _path = self.validatepath(path)
 
         if _path in [u'', u'.', u'/', u'./']:
 
@@ -85,8 +81,72 @@ class GithubFS(FS):
                     }
             }
             return Info(info_dict)
-        else:
-            pass
+
+
+        #splitpath = iteratepath(_path)
+        repopath = '%s/%s' % (self.user, self.repo)
+        #print(repopath)
+        if _path.startswith('/'):
+            _path = _path[1:]
+
+
+
+
+        if _path in [u'', u'.', u'/', u'./']:
+
+            info_dict = {
+                "basic":
+                    {
+                        "name": '',
+                        "is_dir": True
+                    },
+                "details":
+                    {
+                        "type": int(ResourceType.directory)
+                    }
+            }
+            return Info(info_dict)
+
+        repo = self.account.get_repo(repopath)
+        #print(dir(repo))
+        try:
+            contents = repo.get_contents(_path)
+        except UnknownObjectException:
+            raise errors.ResourceNotFound(path)
+        if hasattr(contents,'type'):
+            if contents.type == 'file':
+                info_dict = {
+                    "basic":
+                        {
+                            "name": contents.name,
+                            "is_dir": False
+                        },
+                    "details":
+
+                        {
+                            "size": contents.size,
+                            "type": int(ResourceType.file)
+                        }
+                }
+                return Info(info_dict)
+
+        #print(contents.type())
+
+        info_dict = {
+            "basic":
+                {
+                    "name": '',
+                    "is_dir": True
+                },
+            "details":
+                {
+                    "type": int(ResourceType.directory)
+                }
+        }
+        return Info(info_dict)
+
+
+
             
     def openbin(self, path, mode=u'r', *args, **kwargs):
         _path = self.validatepath(path)
@@ -135,7 +195,9 @@ class GithubFS(FS):
     def removedir(self, *args, **kwargs):
         raise errors.Unsupported()
 
+
+
+
     @classmethod
     def setinfo(self, *args, **kwargs):
         raise errors.Unsupported()
-            

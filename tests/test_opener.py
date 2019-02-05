@@ -7,9 +7,8 @@ import unittest
 import fs
 import fs.errors
 
+#class TestDLNAFSOpener(unittest.TestCase):
 
-class TestDLNAFSOpener(unittest.TestCase):
-
-    def test_open(self):
-        x = fs.open_fs('dlna:///')
-        x.close()
+#    def test_open(self):
+#        x = fs.open_fs('github:///')
+#        x.close()
