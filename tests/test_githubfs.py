@@ -15,6 +15,8 @@ from fs.github import GithubFS
 from six import text_type
 
 
+
+
 class TestGithubFS(unittest.TestCase):
 
     def make_fs(self):
@@ -46,6 +48,10 @@ class TestGithubFS(unittest.TestCase):
 
 
     def test_simple(self):
+        if self.fs.account.get_rate_limit().core.remaining < 10:
+            print('Ratelimit reached, disable Testing')
+            return
+
         print(self.fs)
         filelist = self.fs.listdir('/')
         assert 'README.md' in filelist
