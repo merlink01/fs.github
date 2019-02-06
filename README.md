@@ -19,7 +19,7 @@ Feedback
 --------
 
 Found a bug ? Have an enhancement request ? Head over to the
-[GitHub issue tracker](<https://github.com/merlink01/fs.youtube/issues>) of the
+[GitHub issue tracker](<https://github.com/merlink01/fs.github/issues>) of the
 project if you need to report or ask something. If you are filling in on a bug,
 please include as much information as you can about the issue, and try to
 recreate the same bug in a simple, easily reproductible situation.
