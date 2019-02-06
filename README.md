@@ -1,6 +1,6 @@
 # fs.github
 
-[![Build Status](https://travis-ci.org/merlink01/fs.github.svg?branch=master)](https://travis-ci.org/merlink01/fs.github)   [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b3ad4874ada045b5b53de5a7a4a787e6)](https://www.codacy.com/app/merlink01/fs.github?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=merlink01/fs.github&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/merlink01/fs.github.svg?branch=master)](https://travis-ci.org/merlink01/fs.github)   [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b3ad4874ada045b5b53de5a7a4a787e6)](https://www.codacy.com/app/merlink01/fs.github?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=merlink01/fs.github&amp;utm_campaign=Badge_Grade)   [![codecov](https://codecov.io/gh/merlink01/fs.github/branch/master/graph/badge.svg)](https://codecov.io/gh/merlink01/fs.github)  [![Updates](https://pyup.io/repos/github/merlink01/fs.github/shield.svg)](https://pyup.io/repos/github/merlink01/fs.github/)
 
 A PyFilesystem 2 implementation for accessing Github Repos
 
